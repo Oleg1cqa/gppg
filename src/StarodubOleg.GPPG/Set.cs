@@ -2,12 +2,9 @@
 // Copyright (c) Wayne Kelly, QUT 2005-2014
 // (see accompanying GPPGcopyright.rtf)
 
-
-
 using System;
 using System.Collections.Generic;
 using System.Text;
-
 
 namespace QUT.GPGen
 {
@@ -19,18 +16,15 @@ namespace QUT.GPGen
 		{
 		}
 
-
 		public SetCollection(SetCollection<T> items)
 		{
 			AddRange(items);
 		}
 
-
 		public void Add(T item)
 		{
 			elements[item] = true;
 		}
-
 
 		public void AddRange(SetCollection<T> items)
 		{
@@ -38,18 +32,15 @@ namespace QUT.GPGen
 				Add(item);
 		}
 
-
 		public IEnumerator<T> GetEnumerator()
 		{
 			return elements.Keys.GetEnumerator();
 		}
 
-
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
 		{
 			throw new NotImplementedException("The method or operation is not implemented.");
 		}
-
 
 		public override string ToString()
 		{

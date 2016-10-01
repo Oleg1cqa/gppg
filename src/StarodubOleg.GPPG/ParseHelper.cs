@@ -4,7 +4,6 @@
 
 using System;
 using System.IO;
-using System.Collections;
 using System.Globalization;
 using System.Collections.Generic;
 using QUT.GPGen.Lexers;
@@ -61,8 +60,6 @@ namespace QUT.GPGen.Parser
 				grammar.ValueTypeName = span.ToString();
 			}
 		}
-
-
 
 		private void DeclareTokens(LexSpan span1, PrecType prop, string kind, List<TokenInfo> list)
 		{
@@ -410,5 +407,4 @@ namespace QUT.GPGen.Parser
 			return buffer.GetString(startIndex, endIndex);
 		}
 	}
-
 }

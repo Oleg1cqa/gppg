@@ -2,10 +2,6 @@
 // Copyright (c) Wayne Kelly, QUT 2005-2014
 // (see accompanying GPPGcopyright.rtf)
 
-
-using System;
-
-
 namespace QUT.GPGen
 {
 	internal enum PrecType { left, right, nonassoc, token };

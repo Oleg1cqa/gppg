@@ -2,14 +2,12 @@
 // Copyright (c) Wayne Kelly, QUT 2005-2014
 // (see accompanying GPPGcopyright.rtf)
 
-
 using System;
 using System.Reflection;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using QUT.GPGen.Parser;
-using QUT.GPGen.Lexers;
 
 namespace QUT.GPGen {
 	class Program

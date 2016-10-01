@@ -2,13 +2,9 @@
 // Copyright (c) Wayne Kelly, QUT 2005-2014
 // (see accompanying GPPGcopyright.rtf)
 
-
-
 using System;
 using System.Text;
 using QUT.GPGen.Parser;
-using System.Globalization;
-
 
 namespace QUT.GPGen
 {
@@ -18,7 +14,6 @@ namespace QUT.GPGen
         private int pos;
         private string commands;
         private LexSpan codeSpan;
-
 
         internal SemanticAction(Production production, int pos, LexSpan span)
         {
@@ -212,6 +207,5 @@ namespace QUT.GPGen
         }
 
         private void Output(int i) { Console.Write(commands[i]); }
-
     }
 }

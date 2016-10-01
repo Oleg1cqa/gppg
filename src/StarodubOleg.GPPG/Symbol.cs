@@ -1,13 +1,8 @@
-
 // Gardens Point Parser Generator
 // Copyright (c) Wayne Kelly, QUT 2005-2014
 // (see accompanying GPPGcopyright.rtf)
 
-
-using System;
-using System.Text;
 using System.Collections.Generic;
-
 
 namespace QUT.GPGen
 {
@@ -30,7 +25,6 @@ namespace QUT.GPGen
 		{
 			return name;
 		}
-
 
 		internal abstract bool IsNullable();
 	}
@@ -92,7 +86,6 @@ namespace QUT.GPGen
 			if (alias != null)
 				this.alias = alias;
 		}
-
 
 		internal override bool IsNullable() { return false;	}
 

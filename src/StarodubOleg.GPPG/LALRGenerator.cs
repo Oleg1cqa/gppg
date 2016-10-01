@@ -2,10 +2,7 @@
 // Copyright (c) Wayne Kelly, QUT 2005-2014
 // (see accompanying GPPGcopyright.rtf)
 
-
-using System;
 using System.Collections.Generic;
-
 
 namespace QUT.GPGen
 {
@@ -14,7 +11,6 @@ namespace QUT.GPGen
 		internal LALRGenerator(Grammar grammar): base(grammar)
 		{
 		}
-
 
 		internal void ComputeLookAhead()
 		{
@@ -25,7 +21,6 @@ namespace QUT.GPGen
 			ComputeLA();
 		}
 
-
 		private void ComputeDRs()
 		{
 			// DR(p,A) = { t | p -> A -> r -> t -> ? }
@@ -34,7 +29,6 @@ namespace QUT.GPGen
 				foreach (Transition pA in p.nonTerminalTransitions.Values)
 					pA.DR = pA.next.terminalTransitions;
 		}
-
 
 		private Stack<Transition> S;
 
@@ -52,7 +46,6 @@ namespace QUT.GPGen
 					if (x.N == 0)
 						TraverseReads(x, 1);
 		}
-
 
 		private void TraverseReads(Transition x, int k)
 		{
@@ -81,7 +74,6 @@ namespace QUT.GPGen
 				} while (S.Pop() != x);
 		}
 
-
 		private void ComputeIncludes()
 		{
 			// (p,A) include (q,B) iff B -> Beta A Gamma and Gamma => empty and q -> Beta -> p
@@ -93,7 +85,7 @@ namespace QUT.GPGen
 						for (int i = prod.rhs.Count - 1; i >= 0; i--)
 						{
 							Symbol A = prod.rhs[i];
-                            NonTerminal NT = A as NonTerminal;
+							NonTerminal NT = A as NonTerminal;
 							if (NT != null)
 							{
 								AutomatonState p = PathTo(q, prod, i);
@@ -105,7 +97,6 @@ namespace QUT.GPGen
 						}
 					}
 		}
-
 
 		private static AutomatonState PathTo(AutomatonState q, Production prod, int prefix)
 		{
@@ -123,7 +114,6 @@ namespace QUT.GPGen
 			return q;
 		}
 
-
 		// DeRemer and Pennello algorithm to compute Follows
 		private void ComputeFollows()
 		{
@@ -138,7 +128,6 @@ namespace QUT.GPGen
 					if (x.N == 0)
 						TraverseFollows(x, 1);
 		}
-
 
 		private void TraverseFollows(Transition x, int k)
 		{
@@ -165,7 +154,6 @@ namespace QUT.GPGen
 					S.Peek().Follow = new SetCollection<Terminal>(x.Follow);
 				} while (S.Pop() != x);
 		}
-
 
 		private void ComputeLA()
 		{

@@ -13,7 +13,6 @@ using System.Globalization;
 
 namespace QUT.GPGen
 {
-
     /// <summary>
     /// This class supplies character escape 
     /// utilities for project.

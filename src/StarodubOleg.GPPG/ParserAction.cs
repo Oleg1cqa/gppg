@@ -2,17 +2,12 @@
 // Copyright (c) Wayne Kelly, QUT 2005-2014
 // (see accompanying GPPGcopyright.rtf)
 
-
-using System;
-
-
 namespace QUT.GPGen
 {
 	internal abstract class ParserAction
 	{
-        internal abstract int ToNum();
+		internal abstract int ToNum();
 	}
-
 
 	internal class Shift : ParserAction
 	{
@@ -28,12 +23,11 @@ namespace QUT.GPGen
 			return "shift, and go to state " + next.num;
 		}
 
-        internal override int ToNum()
-        {
-            return next.num;
-        }
+		internal override int ToNum()
+		{
+			return next.num;
+		}
 	}
-
 
 	internal class Reduce : ParserAction
 	{
@@ -49,9 +43,9 @@ namespace QUT.GPGen
 			return "reduce using rule " + item.production.num + " (" + item.production.lhs + ")";
 		}
 
-        internal override int  ToNum()
-        {
-            return -item.production.num;
-        }
+		internal override int  ToNum()
+		{
+			return -item.production.num;
+		}
 	}
 }

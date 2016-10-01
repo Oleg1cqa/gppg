@@ -2,11 +2,9 @@
 // Copyright (c) Wayne Kelly, QUT 2005-2014
 // (see accompanying GPPGcopyright.rtf)
 
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-
 
 namespace QUT.GPGen
 {
@@ -16,21 +14,18 @@ namespace QUT.GPGen
 		protected Grammar grammar;
 		private Dictionary<Symbol, List<AutomatonState>> accessedBy = new Dictionary<Symbol,List<AutomatonState>>();
 
-
 		internal LR0Generator(Grammar grammar)
 		{
 			this.grammar = grammar;
 		}
 
-
-        internal List<AutomatonState> BuildStates()
+		internal List<AutomatonState> BuildStates()
 		{
 			// create state for root production and expand recursively
 			ExpandState(grammar.rootProduction.lhs, new AutomatonState(grammar.rootProduction));
-            
-            return states;
+			
+			return states;
 		}
-
 
 		private void ExpandState(Symbol sym, AutomatonState newState)
 		{
@@ -44,7 +39,6 @@ namespace QUT.GPGen
 			newState.AddClosure();
 			ComputeGoto(newState);
 		}
-
 
 		private void ComputeGoto(AutomatonState state)
 		{
@@ -83,7 +77,6 @@ namespace QUT.GPGen
 				}
 		}
 
-
 		private AutomatonState FindExistingState(Symbol sym, List<ProductionItem> itemSet)
 		{
 			if (accessedBy.ContainsKey(sym))
@@ -94,18 +87,15 @@ namespace QUT.GPGen
 			return null;
 		}
 
-
-
-
 		internal void BuildParseTable()
 		{
 			foreach (AutomatonState state in states)
 			{   //
 				// Add shift actions ...
-                // This makes shift the default action for all
-                // terminal transitions. This is modified as required,
-                // later in this foreach state loop.
-                //
+				// This makes shift the default action for all
+				// terminal transitions. This is modified as required,
+				// later in this foreach state loop.
+				//
 				foreach (Terminal t in state.terminalTransitions)
 					state.parseTable[t] = new Shift(state.Goto[t]);
 
@@ -123,84 +113,84 @@ namespace QUT.GPGen
 							// possible conflict with existing action
 							if (state.parseTable.ContainsKey(t))
 							{
-                                Reduce reduceAction;
+								Reduce reduceAction;
 								ParserAction other = state.parseTable[t];
-                                Production iProd = item.production;
+								Production iProd = item.production;
 								if ((reduceAction = other as Reduce)!= null)
-                                {
-                                    Production oProd = reduceAction.item.production;
+								{
+									Production oProd = reduceAction.item.production;
 
-                                    // Choose in favour of production listed first in the grammar
-                                    if (oProd.num > iProd.num)
-                                        state.parseTable[t] = new Reduce(item);
+									// Choose in favour of production listed first in the grammar
+									if (oProd.num > iProd.num)
+										state.parseTable[t] = new Reduce(item);
 
-                                    string p1 = String.Format(CultureInfo.InvariantCulture, " Reduce {0}:\t{1}", oProd.num, oProd.ToString());
-                                    string p2 = String.Format(CultureInfo.InvariantCulture, " Reduce {0}:\t{1}", iProd.num, iProd.ToString());
-                                    int chsn = (oProd.num > iProd.num ? iProd.num : oProd.num);
-                                    grammar.conflicts.Add(new ReduceReduceConflict(t, p1, p2, chsn, state));
-                                    if (Program.Verbose)
-                                    {
-                                        Console.Error.WriteLine(
-                                            "Reduce/Reduce conflict in state {0} on symbol {1}",
-                                            state.num,
-                                            t.ToString());
-                                        Console.Error.WriteLine(p1);
-                                        Console.Error.WriteLine(p2);
-                                    }
-                                    else
-                                        Console.Error.WriteLine("Reduce/Reduce conflict, state {0}: {1} vs {2} on {3}",
-                                                                                    state.num, iProd.num, oProd.num, t);
-                                }
+									string p1 = String.Format(CultureInfo.InvariantCulture, " Reduce {0}:\t{1}", oProd.num, oProd.ToString());
+									string p2 = String.Format(CultureInfo.InvariantCulture, " Reduce {0}:\t{1}", iProd.num, iProd.ToString());
+									int chsn = (oProd.num > iProd.num ? iProd.num : oProd.num);
+									grammar.conflicts.Add(new ReduceReduceConflict(t, p1, p2, chsn, state));
+									if (Program.Verbose)
+									{
+										Console.Error.WriteLine(
+											"Reduce/Reduce conflict in state {0} on symbol {1}",
+											state.num,
+											t.ToString());
+										Console.Error.WriteLine(p1);
+										Console.Error.WriteLine(p2);
+									}
+									else
+										Console.Error.WriteLine("Reduce/Reduce conflict, state {0}: {1} vs {2} on {3}",
+																					state.num, iProd.num, oProd.num, t);
+								}
 								else
 								{
-                                    if (iProd.prec != null && t.prec != null) {
-                                        if (iProd.prec.prec > t.prec.prec) {
-                                            //
-                                            //  Production iProd has precedence over t, so Reduce.
-                                            //
-                                            state.parseTable[t] = new Reduce( item ); // No shift/Reduce warning.
-                                        }
-                                        else if (iProd.prec.prec == t.prec.prec) {
-                                            //
-                                            //  Precedence is equal, so use associativity to decide.
-                                            //
-                                            if (t.prec.type == PrecType.left) {
-                                                //
-                                                // For %left tokens reduce the left subexpression.
-                                                //
-                                                state.parseTable[t] = new Reduce( item );
-                                            }
-                                            else if (t.prec.type == PrecType.nonassoc) { // && iProd.RightmostTerminal() == t) {
-                                                // What is the correct semantics here?
-                                                // If %nonassoc x y, is E x E y E an error?
-                                                // The YACC spec seems to imply, but not explictly state,
-                                                // that x,y are non-associative AS A GROUP
-                                                // rather than just individually non-associative.
-                                                //
-                                                // For %nonassoc tokens disallow the shift action, and force
-                                                // lookahead just in case this state has an LR0 Reduce action.
-                                                //
-                                                state.parseTable.Remove( t );
-                                                state.ForceLookahead = true;
-                                            }
-                                            // else t.prec.type == PrecType.right, so Shift.
-                                        }
-                                        // else iProd.prec.prec < t.proc.prec, so Shift anyway.
-                                    }
-                                    else {  // Need to issue a Shift/Reduce warning message.
-                                        AutomatonState next = ((Shift)other).next;
-                                        string p1 = String.Format(CultureInfo.InvariantCulture, " Shift \"{0}\":\tState-{1} -> State-{2}", t, state.num, next.num);
-                                        string p2 = String.Format(CultureInfo.InvariantCulture, " Reduce {0}:\t{1}", iProd.num, iProd.ToString());
-                                        grammar.conflicts.Add(new ShiftReduceConflict(t, p1, p2, state, next));
-                                        if (Program.Verbose)
-                                        {
-                                            Console.Error.WriteLine("Shift/Reduce conflict");
-                                            Console.Error.WriteLine(p1);
-                                            Console.Error.WriteLine(p2);
-                                        }
-                                        else
-                                            Console.Error.WriteLine("Shift/Reduce conflict, state {0} on {1}", state.num, t);
-                                    }
+									if (iProd.prec != null && t.prec != null) {
+										if (iProd.prec.prec > t.prec.prec) {
+											//
+											//  Production iProd has precedence over t, so Reduce.
+											//
+											state.parseTable[t] = new Reduce( item ); // No shift/Reduce warning.
+										}
+										else if (iProd.prec.prec == t.prec.prec) {
+											//
+											//  Precedence is equal, so use associativity to decide.
+											//
+											if (t.prec.type == PrecType.left) {
+												//
+												// For %left tokens reduce the left subexpression.
+												//
+												state.parseTable[t] = new Reduce( item );
+											}
+											else if (t.prec.type == PrecType.nonassoc) { // && iProd.RightmostTerminal() == t) {
+												// What is the correct semantics here?
+												// If %nonassoc x y, is E x E y E an error?
+												// The YACC spec seems to imply, but not explictly state,
+												// that x,y are non-associative AS A GROUP
+												// rather than just individually non-associative.
+												//
+												// For %nonassoc tokens disallow the shift action, and force
+												// lookahead just in case this state has an LR0 Reduce action.
+												//
+												state.parseTable.Remove( t );
+												state.ForceLookahead = true;
+											}
+											// else t.prec.type == PrecType.right, so Shift.
+										}
+										// else iProd.prec.prec < t.proc.prec, so Shift anyway.
+									}
+									else {  // Need to issue a Shift/Reduce warning message.
+										AutomatonState next = ((Shift)other).next;
+										string p1 = String.Format(CultureInfo.InvariantCulture, " Shift \"{0}\":\tState-{1} -> State-{2}", t, state.num, next.num);
+										string p2 = String.Format(CultureInfo.InvariantCulture, " Reduce {0}:\t{1}", iProd.num, iProd.ToString());
+										grammar.conflicts.Add(new ShiftReduceConflict(t, p1, p2, state, next));
+										if (Program.Verbose)
+										{
+											Console.Error.WriteLine("Shift/Reduce conflict");
+											Console.Error.WriteLine(p1);
+											Console.Error.WriteLine(p2);
+										}
+										else
+											Console.Error.WriteLine("Shift/Reduce conflict, state {0} on {1}", state.num, t);
+									}
 								}
 							}
 							else
@@ -211,81 +201,81 @@ namespace QUT.GPGen
 		}
 	}
 
-    // ===========================================================
-    #region Diagnostics
-    /// <summary>
-    /// Class for determining input token sequences that
-    /// lead to each state by the shortest token sequence.
-    /// The corresponding sequence for each NonTerminal is
-    /// already computed in Grammar.MarkTerminating() as a
-    /// side-effect of detecting non-terminating NonTerms.
-    /// </summary>
-    internal static class DiagnosticHelp
-    {
-        private static List<T> ListClone<T>(List<T> list)
-        {
-            List<T> rslt = new List<T>(list.Count + 1);
-            for (int i = 0; i < list.Count; i++)
-                rslt.Add(list[i]);
-            return rslt;
-        }
+	// ===========================================================
+	#region Diagnostics
+	/// <summary>
+	/// Class for determining input token sequences that
+	/// lead to each state by the shortest token sequence.
+	/// The corresponding sequence for each NonTerminal is
+	/// already computed in Grammar.MarkTerminating() as a
+	/// side-effect of detecting non-terminating NonTerms.
+	/// </summary>
+	internal static class DiagnosticHelp
+	{
+		private static List<T> ListClone<T>(List<T> list)
+		{
+			List<T> rslt = new List<T>(list.Count + 1);
+			for (int i = 0; i < list.Count; i++)
+				rslt.Add(list[i]);
+			return rslt;
+		}
 
-        internal static void PopulatePrefixes(List<AutomatonState> states)
-        {
-            AutomatonState start = states[0];
-            start.shortestPrefix = new List<Symbol>(); // The empty list.
-            start.statePath = new List<AutomatonState>();
-            start.statePath.Add(start);
+		internal static void PopulatePrefixes(List<AutomatonState> states)
+		{
+			AutomatonState start = states[0];
+			start.shortestPrefix = new List<Symbol>(); // The empty list.
+			start.statePath = new List<AutomatonState>();
+			start.statePath.Add(start);
 
-            bool changed = false;
-            do
-            {
-                changed = false;
-                foreach (AutomatonState state in states)
-                {
-                    List<Symbol> newfix;
-                    List<Symbol> prefix = state.shortestPrefix;
-                    List<AutomatonState> newPath;
-                    List<AutomatonState> oldPath = state.statePath;
+			bool changed = false;
+			do
+			{
+				changed = false;
+				foreach (AutomatonState state in states)
+				{
+					List<Symbol> newfix;
+					List<Symbol> prefix = state.shortestPrefix;
+					List<AutomatonState> newPath;
+					List<AutomatonState> oldPath = state.statePath;
 
-                    if (prefix != null)
-                    {
-                        foreach (KeyValuePair<Symbol, AutomatonState> a in state.Goto)
-                        {
-                            Symbol smbl = a.Key;
-                            AutomatonState nextState = a.Value;
-                            newfix = ListClone<Symbol>(prefix);
-                            newPath = ListClone<AutomatonState>(oldPath);
+					if (prefix != null)
+					{
+						foreach (KeyValuePair<Symbol, AutomatonState> a in state.Goto)
+						{
+							Symbol smbl = a.Key;
+							AutomatonState nextState = a.Value;
+							newfix = ListClone<Symbol>(prefix);
+							newPath = ListClone<AutomatonState>(oldPath);
 
-                            newPath.Add(nextState);
-                            if (!smbl.IsNullable())
-                                newfix.Add(smbl);
-                            if (nextState.shortestPrefix == null ||
-                                nextState.shortestPrefix.Count > newfix.Count)
-                            {
-                                nextState.shortestPrefix = newfix;
-                                nextState.statePath = newPath;
-                                changed = true;
-                            }
-                        }
-                    }
-                }
-            } while (changed);
-        }
+							newPath.Add(nextState);
+							if (!smbl.IsNullable())
+								newfix.Add(smbl);
+							if (nextState.shortestPrefix == null ||
+								nextState.shortestPrefix.Count > newfix.Count)
+							{
+								nextState.shortestPrefix = newfix;
+								nextState.statePath = newPath;
+								changed = true;
+							}
+						}
+					}
+				}
+			} while (changed);
+		}
 
-        internal static void PopulatePredecessors( List<AutomatonState> states ) {
-            foreach (AutomatonState state in states) {
-                if (state.predecessors == null)
-                    state.predecessors = new List<AutomatonState>();
-                foreach (AutomatonState symbolTarget in state.Goto.Values) {
-                    symbolTarget.AddPredecessor( state );
-                }
-                foreach (Transition nontermTransition in state.nonTerminalTransitions.Values) {
-                    nontermTransition.next.AddPredecessor( state );
-                }
-            }
-        }
-    }
-    #endregion
-    // ===========================================================
+		internal static void PopulatePredecessors( List<AutomatonState> states ) {
+			foreach (AutomatonState state in states) {
+				if (state.predecessors == null)
+					state.predecessors = new List<AutomatonState>();
+				foreach (AutomatonState symbolTarget in state.Goto.Values) {
+					symbolTarget.AddPredecessor( state );
+				}
+				foreach (Transition nontermTransition in state.nonTerminalTransitions.Values) {
+					nontermTransition.next.AddPredecessor( state );
+				}
+			}
+		}
+	}
+	#endregion
+	// ===========================================================
 }

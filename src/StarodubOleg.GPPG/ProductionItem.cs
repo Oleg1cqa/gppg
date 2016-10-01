@@ -2,12 +2,8 @@
 // Copyright (c) Wayne Kelly, QUT 2005-2014
 // (see accompanying GPPGcopyright.rtf)
 
-
-
-using System;
 using System.Collections.Generic;
 using System.Text;
-
 
 namespace QUT.GPGen
 {
@@ -18,13 +14,11 @@ namespace QUT.GPGen
 		internal bool expanded;
 		internal SetCollection<Terminal> LA;
 
-
 		internal ProductionItem(Production production, int pos)
 		{
 			this.production = production;
 			this.pos = pos;
 		}
-
 
 		public override bool Equals(object obj)
 		{
@@ -36,7 +30,6 @@ namespace QUT.GPGen
 		{
 			return production.GetHashCode() + pos;
 		}
-
 
 		internal static bool SameProductions(List<ProductionItem> list1, List<ProductionItem> list2)
 		{
@@ -60,12 +53,10 @@ namespace QUT.GPGen
 			return true;
 		}
 
-
 		internal bool isReduction()
 		{
 			return pos == production.rhs.Count;
 		}
-
 
 		public override string ToString()
 		{
@@ -84,11 +75,11 @@ namespace QUT.GPGen
 			if (pos == production.rhs.Count)
 				builder.Append(".");
 
-            if (LA != null)
-            {
-                builder.AppendLine();
-                builder.AppendFormat("\t-lookahead: {0}", ListUtilities.GetStringFromList(LA, ", ", 16));
-            }
+			if (LA != null)
+			{
+				builder.AppendLine();
+				builder.AppendFormat("\t-lookahead: {0}", ListUtilities.GetStringFromList(LA, ", ", 16));
+			}
 
 			return builder.ToString();
 		}

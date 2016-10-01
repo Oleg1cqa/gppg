@@ -1,7 +1,17 @@
 ﻿{
-  "version": "0.1.0-alpha1-1",
+  "version": "0.1.0-alpha1-2",
+  "description": "Tools based on Gardens Point Parser Generator version 1.5.2",
+  "authors": [ "Wayne Kelly", "John Gough", "Starodub Oleg" ],
+  "copyright": "Wayne Kelly, John Gough 2005-2014, Starodub Oleg, 2016",
+
+  "packOptions": {
+    "tags": [ "GPPG", "Parser", "netcore" ],
+    "projectUrl": "https://github.com/Oleg1cqa/gppg",
+    "licenseUrl": "https://github.com/Oleg1cqa/gppg/blob/master/License.md"
+  },
   "buildOptions": {
-    "emitEntryPoint": true
+    "emitEntryPoint": true,
+    "outputName": "dotnet-gppg"
   },
 
   "dependencies": {
@@ -13,7 +23,8 @@
   },
 
   "tools": {
-    "StarodubOleg.GPLEX": "0.1.0-alpha1-3"
+    "StarodubOleg.GPLEX": "0.1.0-alpha1-3",
+    "StarodubOleg.GPPG" : "0.1.0-alpha1-1"
   },
 
   "frameworks": {
@@ -24,7 +35,8 @@
   "scripts": {
     "precompile": [
       "dotnet gplex %project:Directory%/gppg.lex",
-      "dotnet gplex %project:Directory%/ScanAction.lex"
+      "dotnet gplex %project:Directory%/ScanAction.lex",
+      "dotnet gppg /gplex /nolines %project:Directory%/gppg.y"
     ]
   }
 }

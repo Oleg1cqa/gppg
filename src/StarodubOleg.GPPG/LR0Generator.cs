@@ -138,7 +138,7 @@ namespace QUT.GPGen
                                     string p2 = String.Format(CultureInfo.InvariantCulture, " Reduce {0}:\t{1}", iProd.num, iProd.ToString());
                                     int chsn = (oProd.num > iProd.num ? iProd.num : oProd.num);
                                     grammar.conflicts.Add(new ReduceReduceConflict(t, p1, p2, chsn, state));
-                                    if (GPCG.Verbose)
+                                    if (Program.Verbose)
                                     {
                                         Console.Error.WriteLine(
                                             "Reduce/Reduce conflict in state {0} on symbol {1}",
@@ -192,7 +192,7 @@ namespace QUT.GPGen
                                         string p1 = String.Format(CultureInfo.InvariantCulture, " Shift \"{0}\":\tState-{1} -> State-{2}", t, state.num, next.num);
                                         string p2 = String.Format(CultureInfo.InvariantCulture, " Reduce {0}:\t{1}", iProd.num, iProd.ToString());
                                         grammar.conflicts.Add(new ShiftReduceConflict(t, p1, p2, state, next));
-                                        if (GPCG.Verbose)
+                                        if (Program.Verbose)
                                         {
                                             Console.Error.WriteLine("Shift/Reduce conflict");
                                             Console.Error.WriteLine(p1);

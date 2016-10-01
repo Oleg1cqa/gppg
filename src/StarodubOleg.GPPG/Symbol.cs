@@ -11,7 +11,6 @@ using System.Collections.Generic;
 
 namespace QUT.GPGen
 {
-    [Serializable]
 	internal abstract class Symbol
 	{
 		private string name;
@@ -36,24 +35,23 @@ namespace QUT.GPGen
 		internal abstract bool IsNullable();
 	}
 
-    [Serializable]
 	internal class Terminal : Symbol
 	{
-        static int count;
+		static int count;
 		static int max;
-        internal static int Max { get { return max; } }
+		internal static int Max { get { return max; } }
 
 		internal Precedence prec;
 		private int n;
 		internal bool symbolic;
-        private string alias;
+		private string alias;
 
-        internal string Alias { get { return alias; } }
+		internal string Alias { get { return alias; } }
 
-        internal void AddAlias( string alias ) {
-            if (this.alias == null)
-                this.alias = alias;
-        }
+		internal void AddAlias( string alias ) {
+			if (this.alias == null)
+				this.alias = alias;
+		}
 
 		internal override int num
 		{
@@ -66,16 +64,16 @@ namespace QUT.GPGen
 			}
 		}
 
-        /// <summary>
-        /// If name is an escaped char-lit, it must already be
-        /// canonicalized according to some convention. In this 
-        /// application CharUtils.Canonicalize().
-        /// </summary>
-        /// <param name="symbolic">Means "is an ident, not a literal character"</param>
-        /// <param name="name">string representation of symbol</param>
+		/// <summary>
+		/// If name is an escaped char-lit, it must already be
+		/// canonicalized according to some convention. In this 
+		/// application CharUtils.Canonicalize().
+		/// </summary>
+		/// <param name="symbolic">Means "is an ident, not a literal character"</param>
+		/// <param name="name">string representation of symbol</param>
 		internal Terminal(bool symbolic, string name)
-        	: base(name)
-        {
+			: base(name)
+		{
 			this.symbolic = symbolic;
 			if (symbolic)
 				this.n = ++count;
@@ -86,73 +84,72 @@ namespace QUT.GPGen
 			}
 		}
 
-        internal static readonly Terminal Ambiguous = new Terminal( true, "$Ambiguous$" );
+		internal static readonly Terminal Ambiguous = new Terminal( true, "$Ambiguous$" );
 
-        internal Terminal(bool symbolic, string name, string alias) 
-            : this(symbolic, name)
-        {
-            if (alias != null)
-                this.alias = alias;
-        }
+		internal Terminal(bool symbolic, string name, string alias) 
+			: this(symbolic, name)
+		{
+			if (alias != null)
+				this.alias = alias;
+		}
 
 
 		internal override bool IsNullable() { return false;	}
 
-        internal string EnumName() { return base.ToString(); }
+		internal string EnumName() { return base.ToString(); }
 
-        public override string ToString()
-        {
-            if (this.alias != null)
-                return CharacterUtilities.QuoteAndCanonicalize( this.alias );
-            else 
-                return base.ToString();
-        }
+		public override string ToString()
+		{
+			if (this.alias != null)
+				return CharacterUtilities.QuoteAndCanonicalize( this.alias );
+			else 
+				return base.ToString();
+		}
 
-        public string BaseString() {
-            return base.ToString();
-        }
+		public string BaseString() {
+			return base.ToString();
+		}
 
-        internal static void InsertMaxDummyTerminalInDictionary( Dictionary<string, Terminal> table ) {
-            Terminal maxTerm = null;
-            if (Terminal.Max != 0) {
-                string maxChr = CharacterUtilities.QuoteMap( Terminal.Max ); // FIXME
-                maxTerm = table[maxChr];
-            }
-            table["@Max@"] = maxTerm;
-        }
+		internal static void InsertMaxDummyTerminalInDictionary( Dictionary<string, Terminal> table ) {
+			Terminal maxTerm = null;
+			if (Terminal.Max != 0) {
+				string maxChr = CharacterUtilities.QuoteMap( Terminal.Max ); // FIXME
+				maxTerm = table[maxChr];
+			}
+			table["@Max@"] = maxTerm;
+		}
 
-        internal static void RemoveMaxDummyTerminalFromDictionary( Dictionary<string, Terminal> table ) {
-            Terminal maxTerm = table["@Max@"];
-            max = (maxTerm != null ? maxTerm.n : 0);
-            table.Remove( "@Max@" );
-        }
+		internal static void RemoveMaxDummyTerminalFromDictionary( Dictionary<string, Terminal> table ) {
+			Terminal maxTerm = table["@Max@"];
+			max = (maxTerm != null ? maxTerm.n : 0);
+			table.Remove( "@Max@" );
+		}
 
-        internal static bool BumpsMax( string str ) {
-            string num = CharacterUtilities.CanonicalizeCharacterLiteral( str, 1 );
-            int ord = CharacterUtilities.OrdinalOfCharacterLiteral( str, 1 );
-            return ord > Terminal.max;
-        }
+		internal static bool BumpsMax( string str ) {
+			string num = CharacterUtilities.CanonicalizeCharacterLiteral( str, 1 );
+			int ord = CharacterUtilities.OrdinalOfCharacterLiteral( str, 1 );
+			return ord > Terminal.max;
+		}
 	}
-
 
 	internal class NonTerminal : Symbol
 	{
-        internal bool reached;
+		internal bool reached;
 
-        // Start experimental features
-        internal List<NonTerminal> dependsOnList;
-        internal int depth;
-        internal bool terminating;
-        // end
+		// Start experimental features
+		internal List<NonTerminal> dependsOnList;
+		internal int depth;
+		internal bool terminating;
+		// end
 
-        static int count;
+		static int count;
 		private int n;
 		internal List<Production> productions = new List<Production>();
 
 		internal NonTerminal(string name)
 			: base(name)
 		{
-            n = ++count;
+			n = ++count;
 		}
 
 		internal override int num

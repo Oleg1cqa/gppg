@@ -10,7 +10,6 @@ namespace QUT.GPGen
 {
 	internal enum PrecType { left, right, nonassoc, token };
  
-    [Serializable]
 	internal class Precedence
 	{
 		internal PrecType type;
@@ -23,15 +22,15 @@ namespace QUT.GPGen
 		}
 
 		internal static void Calculate(Production p) {
-            //
+			//
 			// Precedence of a production is that of its rightmost terminal
 			// unless explicitly labelled with %prec
-            //
-            if (p.prec == null) {
-                Terminal last = p.RightmostTerminal();
-                if (last != null)
-                    p.prec = last.prec;
-            }
+			//
+			if (p.prec == null) {
+				Terminal last = p.RightmostTerminal();
+				if (last != null)
+					p.prec = last.prec;
+			}
 		}
 	}
 }

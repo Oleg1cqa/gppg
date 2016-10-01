@@ -34,11 +34,11 @@ namespace QUT.GPGen
         internal void GenerateCode( CodeGenerator codeGenerator ) {
             int i = 0;
             int line = codeSpan.startLine;
-            bool doLines = GPCG.Lines;
+            bool doLines = Program.Lines;
 
             int length = commands.Length;
             if (doLines) {
-                Console.WriteLine( "#line {0} \"{1}\"", line, GPCG.LinesFilename ?? codeGenerator.grammar.InputFilename );
+                Console.WriteLine( "#line {0} \"{1}\"", line, Program.LinesFilename ?? codeGenerator.grammar.InputFilename );
                 for (int j = 0; j < codeSpan.startColumn; j++)
                     Console.Write( " " );
             }

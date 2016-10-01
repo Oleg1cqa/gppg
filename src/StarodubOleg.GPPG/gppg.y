@@ -115,24 +115,24 @@ Declaration
 
     | kwLocations		{ handler.ListError(@1, 101); }
 
-    | kwDefines			{ GPCG.Defines = true; }
+    | kwDefines			{ Program.Defines = true; }
 
-	| kwCsTokenFile     { GPCG.CsTokenFile = true; }
+	| kwCsTokenFile     { Program.CsTokenFile = true; }
     
     | kwPartial			{ grammar.IsPartial = true; }
 
-	| kwShareTokens     { GPCG.ShareTokens = true; }
+	| kwShareTokens     { Program.ShareTokens = true; }
 
 	| kwImportTokens '=' filePath
-						{ GPCG.ImportedTokens = true;
+						{ Program.ImportedTokens = true;
 						  grammar.DatFileName = @3.ToString(); }
 
 	| kwImportTokens '=' litstring
-						{ GPCG.ImportedTokens = true;
+						{ Program.ImportedTokens = true;
 						  grammar.DatFileName = GetLitString(@3); }
 						
     | kwImportTokens '=' verbatim
-						{ GPCG.ImportedTokens = true;
+						{ Program.ImportedTokens = true;
 						  grammar.DatFileName = GetVerbatimString(@3); }
 
     | kwNamespace DottedName

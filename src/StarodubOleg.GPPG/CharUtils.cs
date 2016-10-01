@@ -9,7 +9,6 @@
 using System;
 using System.Text;
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.Serialization;
 using System.Globalization;
 
 namespace QUT.GPGen
@@ -49,10 +48,10 @@ namespace QUT.GPGen
         {
             int x = (char.IsDigit(a) ? 
                 (int)a - (int)'0' : 
-                (int)char.ToLower(a, CultureInfo.InvariantCulture) + (10 - (int)'a'));
+                (int)char.ToLowerInvariant(a) + (10 - (int)'a'));
             int y = (char.IsDigit(b) ? 
                 (int)b - (int)'0' :
-                (int)char.ToLower(b, CultureInfo.InvariantCulture) + (10 - (int)'a'));
+                (int)char.ToLowerInvariant(b) + (10 - (int)'a'));
             return (char)(x * 16 + y);
         }
 
@@ -60,7 +59,7 @@ namespace QUT.GPGen
         {
             return ((x >= '0' && x <= '9') ? 
                 (int)x - (int)'0' : 
-                (int)char.ToLower(x, CultureInfo.InvariantCulture) + (10 - (int)'a'));
+                (int)char.ToLowerInvariant(x) + (10 - (int)'a'));
         }
 
         private static bool IsHexDigit(char c)
@@ -460,14 +459,11 @@ namespace QUT.GPGen
         }
     }
 
-    [Serializable]
     public class StringInterpretException : Exception
     {
         public StringInterpretException() { }
         public StringInterpretException(string message) : base(message) { }
         public StringInterpretException(string message, Exception innerException)
             : base(message, innerException) { }
-        protected StringInterpretException(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
     }
 }

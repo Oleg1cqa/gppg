@@ -11,21 +11,17 @@ using System.IO;
 using System.Text;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.Serialization;
 using System.Globalization;
 
 namespace QUT.GplexBuffers
 {
 // Code copied from GPLEX embedded resource
-    [Serializable]
     public class BufferException : Exception
     {
         public BufferException() { }
         public BufferException(string message) : base(message) { }
         public BufferException(string message, Exception innerException)
             : base(message, innerException) { }
-        protected BufferException(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
     }
 
     public abstract class ScanBuff
@@ -345,7 +341,7 @@ namespace QUT.GplexBuffers
             get
             {
                 StreamReader rdr = NextBlk.Target as StreamReader;
-                return (rdr == null ? "raw-bytes" : rdr.CurrentEncoding.BodyName);
+                return (rdr == null ? "raw-bytes" : rdr.CurrentEncoding.EncodingName);
             }
         }
 
@@ -469,7 +465,7 @@ namespace QUT.GplexBuffers
                 else if (guess == 65001)
                     encoding = Encoding.UTF8;
                 else             // ==> use the machine default
-                    encoding = Encoding.Default;
+                    encoding = Encoding.UTF8;
             }
             StreamReader reader = new StreamReader(stream, encoding);
             return reader.Read;

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using QUT.GPGen.Lexers;
 using QUT.GplexBuffers;
 using Newtonsoft.Json;
+using StarodubOleg.GPPG.Runtime;
 
 namespace QUT.GPGen.Parser
 {
@@ -378,7 +379,7 @@ namespace QUT.GPGen.Parser
 	/// The fields record both line:column information and also 
 	/// file position data and buffer object identity.
 	/// </summary>
-	internal class LexSpan : QUT.Gppg.IMerge<LexSpan>
+	internal class LexSpan : IMerge<LexSpan>
 	{
 		internal int startLine;     // start line of span
 		internal int startColumn;   // start column of span

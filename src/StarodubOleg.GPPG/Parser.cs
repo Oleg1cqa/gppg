@@ -14,8 +14,9 @@ using System.Collections.Generic;
 using System.CodeDom.Compiler;
 using System.Globalization;
 using System.Text;
-using QUT.Gppg;
+using StarodubOleg.GPPG.Runtime;
 using System.Collections;
+using System.Linq;
 
 namespace QUT.GPGen.Parser
 {
@@ -403,46 +404,46 @@ internal partial class Parser: ShiftReduceParser<ValueType, LexSpan>
     switch (action)
     {
       case 4: // Divider -> "%%"
-{ TidyUpDefinitions(LocationStack[LocationStack.Depth-1]); }
+{ TidyUpDefinitions(LocationStack.Skip(LocationStack.Count - 1).First()); }
         break;
       case 5: // EpilogOpt -> "%%", CodeBlock
-{ grammar.epilogCode = LocationStack[LocationStack.Depth-1]; }
+{ grammar.epilogCode = LocationStack.Skip(LocationStack.Count - 1).First(); }
         break;
       case 7: // CodeBlock -> codeStart, codeEnd
 { /* default location action @$ = @1.Merge(@2); */ }
         break;
       case 9: // CodeBlock -> codeStart, error
-{ handler.ListError(LocationStack[LocationStack.Depth-2], 77); }
+{ handler.ListError(LocationStack.Skip(LocationStack.Count - 2).First(), 77); }
         break;
       case 16: // Definition -> "%{", CodeBlock, "%}"
-{ grammar.prologCode.Add(LocationStack[LocationStack.Depth-2]); }
+{ grammar.prologCode.Add(LocationStack.Skip(LocationStack.Count - 2).First()); }
         break;
       case 18: // Declaration -> "%token", KindOpt, TokenList
-{ DeclareTokens(LocationStack[LocationStack.Depth-3], PrecType.token, LocationStack[LocationStack.Depth-2].ToString(), ValueStack[ValueStack.Depth-1].tokenList); }
+{ DeclareTokens(LocationStack.Skip(LocationStack.Count - 3).First(), PrecType.token, LocationStack.Skip(LocationStack.Count - 2).First().ToString(), ValueStack.Skip(ValueStack.Count - 1).First().tokenList); }
         break;
       case 19: // Declaration -> "%type", Kind, NtSymbolList
 {
-						  string kind = LocationStack[LocationStack.Depth-2].ToString();
-						  DeclareNtKind(kind, ValueStack[ValueStack.Depth-1].stringList);
+						  string kind = LocationStack.Skip(LocationStack.Count - 2).First().ToString();
+						  DeclareNtKind(kind, ValueStack.Skip(ValueStack.Count - 1).First().stringList);
 						}
         break;
       case 20: // Declaration -> "%left", KindOpt, TokenList
-{ DeclareTokens(LocationStack[LocationStack.Depth-3], PrecType.left, LocationStack[LocationStack.Depth-2].ToString(), ValueStack[ValueStack.Depth-1].tokenList); }
+{ DeclareTokens(LocationStack.Skip(LocationStack.Count - 3).First(), PrecType.left, LocationStack.Skip(LocationStack.Count - 2).First().ToString(), ValueStack.Skip(ValueStack.Count - 1).First().tokenList); }
         break;
       case 21: // Declaration -> "%right", KindOpt, TokenList
-{ DeclareTokens(LocationStack[LocationStack.Depth-3], PrecType.right, LocationStack[LocationStack.Depth-2].ToString(), ValueStack[ValueStack.Depth-1].tokenList); }
+{ DeclareTokens(LocationStack.Skip(LocationStack.Count - 3).First(), PrecType.right, LocationStack.Skip(LocationStack.Count - 2).First().ToString(), ValueStack.Skip(ValueStack.Count - 1).First().tokenList); }
         break;
       case 22: // Declaration -> "%nonassoc", KindOpt, TokenList
-{ DeclareTokens(LocationStack[LocationStack.Depth-3], PrecType.nonassoc, LocationStack[LocationStack.Depth-2].ToString(), ValueStack[ValueStack.Depth-1].tokenList); }
+{ DeclareTokens(LocationStack.Skip(LocationStack.Count - 3).First(), PrecType.nonassoc, LocationStack.Skip(LocationStack.Count - 2).First().ToString(), ValueStack.Skip(ValueStack.Count - 1).First().tokenList); }
         break;
       case 23: // Declaration -> "%start", NtSymbol
-{ grammar.startSymbol = grammar.LookupNonTerminal(LocationStack[LocationStack.Depth-1].ToString()); }
+{ grammar.startSymbol = grammar.LookupNonTerminal(LocationStack.Skip(LocationStack.Count - 1).First().ToString()); }
         break;
       case 24: // Declaration -> "%union", TypeNameOpt, UnionTypeConstructor
-{ grammar.unionType = LocationStack[LocationStack.Depth-1]; }
+{ grammar.unionType = LocationStack.Skip(LocationStack.Count - 1).First(); }
         break;
       case 25: // Declaration -> "%locations"
-{ handler.ListError(LocationStack[LocationStack.Depth-1], 101); }
+{ handler.ListError(LocationStack.Skip(LocationStack.Count - 1).First(), 101); }
         break;
       case 26: // Declaration -> "%defines"
 { Program.Defines = true; }
@@ -458,145 +459,145 @@ internal partial class Parser: ShiftReduceParser<ValueType, LexSpan>
         break;
       case 30: // Declaration -> "%importtokens", '=', filePath
 { Program.ImportedTokens = true;
-						  grammar.DatFileName = LocationStack[LocationStack.Depth-1].ToString(); }
+						  grammar.DatFileName = LocationStack.Skip(LocationStack.Count - 1).First().ToString(); }
         break;
       case 31: // Declaration -> "%importtokens", '=', litstring
 { Program.ImportedTokens = true;
-						  grammar.DatFileName = GetLitString(LocationStack[LocationStack.Depth-1]); }
+						  grammar.DatFileName = GetLitString(LocationStack.Skip(LocationStack.Count - 1).First()); }
         break;
       case 32: // Declaration -> "%importtokens", '=', verbatim
 { Program.ImportedTokens = true;
-						  grammar.DatFileName = GetVerbatimString(LocationStack[LocationStack.Depth-1]); }
+						  grammar.DatFileName = GetVerbatimString(LocationStack.Skip(LocationStack.Count - 1).First()); }
         break;
       case 33: // Declaration -> "%namespace", DottedName
-{ grammar.Namespace = LocationStack[LocationStack.Depth-1].ToString(); }
+{ grammar.Namespace = LocationStack.Skip(LocationStack.Count - 1).First().ToString(); }
         break;
       case 34: // Declaration -> "%using", DottedName, SemiOpt
-{ grammar.usingList.Add(LocationStack[LocationStack.Depth-2].ToString()); }
+{ grammar.usingList.Add(LocationStack.Skip(LocationStack.Count - 2).First().ToString()); }
         break;
       case 35: // Declaration -> "%output", '=', filePath
-{ grammar.OutFileName = LocationStack[LocationStack.Depth-1].ToString(); }
+{ grammar.OutFileName = LocationStack.Skip(LocationStack.Count - 1).First().ToString(); }
         break;
       case 36: // Declaration -> "%output", '=', litstring
-{ grammar.OutFileName = GetLitString(LocationStack[LocationStack.Depth-1]); }
+{ grammar.OutFileName = GetLitString(LocationStack.Skip(LocationStack.Count - 1).First()); }
         break;
       case 37: // Declaration -> "%output", '=', verbatim
-{ grammar.OutFileName = GetVerbatimString(LocationStack[LocationStack.Depth-1]); }
+{ grammar.OutFileName = GetVerbatimString(LocationStack.Skip(LocationStack.Count - 1).First()); }
         break;
       case 38: // Declaration -> "%scanbasetype", ident
-{ grammar.ScanBaseName = LocationStack[LocationStack.Depth-1].ToString(); }
+{ grammar.ScanBaseName = LocationStack.Skip(LocationStack.Count - 1).First().ToString(); }
         break;
       case 39: // Declaration -> "%parsertype", ident
-{ grammar.ParserName = LocationStack[LocationStack.Depth-1].ToString(); }
+{ grammar.ParserName = LocationStack.Skip(LocationStack.Count - 1).First().ToString(); }
         break;
       case 40: // Declaration -> "%visibility", ident
-{ grammar.Visibility = LocationStack[LocationStack.Depth-1].ToString(); }
+{ grammar.Visibility = LocationStack.Skip(LocationStack.Count - 1).First().ToString(); }
         break;
       case 41: // Declaration -> "%tokentype", ident
-{ grammar.TokenName = LocationStack[LocationStack.Depth-1].ToString(); }
+{ grammar.TokenName = LocationStack.Skip(LocationStack.Count - 1).First().ToString(); }
         break;
       case 42: // Declaration -> "%YYSTYPE", TypeConstructor
-{ SetSemanticType(LocationStack[LocationStack.Depth-1]); }
+{ SetSemanticType(LocationStack.Skip(LocationStack.Count - 1).First()); }
         break;
       case 43: // Declaration -> "%YYLTYPE", TypeConstructor
-{ grammar.LocationTypeName = LocationStack[LocationStack.Depth-1].ToString(); }
+{ grammar.LocationTypeName = LocationStack.Skip(LocationStack.Count - 1).First().ToString(); }
         break;
       case 44: // TypeNameOpt -> ident
-{ SetSemanticType(LocationStack[LocationStack.Depth-1]); }
+{ SetSemanticType(LocationStack.Skip(LocationStack.Count - 1).First()); }
         break;
       case 50: // Kind -> '<', ident, '>'
-{ CurrentLocationSpan = LocationStack[LocationStack.Depth-2]; }
+{ CurrentLocationSpan = LocationStack.Skip(LocationStack.Count - 2).First(); }
         break;
       case 52: // TokenList -> TokenDecl
 {
                           CurrentSemanticValue.tokenList = new List<TokenInfo>();
-                          CurrentSemanticValue.tokenList.Add(ValueStack[ValueStack.Depth-1].tokenInfo);
+                          CurrentSemanticValue.tokenList.Add(ValueStack.Skip(ValueStack.Count - 1).First().tokenInfo);
                         }
         break;
       case 53: // TokenList -> TokenList, CommaOpt, TokenDecl
-{ ValueStack[ValueStack.Depth-3].tokenList.Add(ValueStack[ValueStack.Depth-1].tokenInfo); CurrentSemanticValue.tokenList = ValueStack[ValueStack.Depth-3].tokenList;}
+{ ValueStack.Skip(ValueStack.Count-3).First().tokenList.Add(ValueStack.Skip(ValueStack.Count - 1).First().tokenInfo); CurrentSemanticValue.tokenList = ValueStack.Skip(ValueStack.Count - 3).First().tokenList;}
         break;
       case 54: // TokenList -> TokenList, BadSeparator
-{ handler.ListError(LocationStack[LocationStack.Depth-1], 75); CurrentSemanticValue.tokenList = ValueStack[ValueStack.Depth-2].tokenList; }
+{ handler.ListError(LocationStack.Skip(LocationStack.Count - 1).First(), 75); CurrentSemanticValue.tokenList = ValueStack.Skip(ValueStack.Count - 2).First().tokenList; }
         break;
       case 55: // TokenDecl -> ident, number
 { 
-                          handler.ListError(LocationStack[LocationStack.Depth-1], 100); 
-                          CurrentSemanticValue.tokenInfo = new TokenInfo(LocationStack[LocationStack.Depth-2], null);
+                          handler.ListError(LocationStack.Skip(LocationStack.Count - 1).First(), 100); 
+                          CurrentSemanticValue.tokenInfo = new TokenInfo(LocationStack.Skip(LocationStack.Count - 2).First(), null);
                         }
         break;
       case 56: // TokenDecl -> ident, litstring, number
 { 
-                          handler.ListError(LocationStack[LocationStack.Depth-2], 100); 
-                          CurrentSemanticValue.tokenInfo = new TokenInfo(LocationStack[LocationStack.Depth-3], LocationStack[LocationStack.Depth-2]);
+                          handler.ListError(LocationStack.Skip(LocationStack.Count - 2).First(), 100); 
+                          CurrentSemanticValue.tokenInfo = new TokenInfo(LocationStack.Skip(LocationStack.Count - 3).First(), LocationStack.Skip(LocationStack.Count - 2).First());
                         }
         break;
       case 57: // TokenDecl -> ident
-{ CurrentSemanticValue.tokenInfo = new TokenInfo(LocationStack[LocationStack.Depth-1], null); }
+{ CurrentSemanticValue.tokenInfo = new TokenInfo(LocationStack.Skip(LocationStack.Count - 1).First(), null); }
         break;
       case 58: // TokenDecl -> ident, litstring
-{ CurrentSemanticValue.tokenInfo = new TokenInfo(LocationStack[LocationStack.Depth-2], LocationStack[LocationStack.Depth-1]); }
+{ CurrentSemanticValue.tokenInfo = new TokenInfo(LocationStack.Skip(LocationStack.Count - 2).First(), LocationStack.Skip(LocationStack.Count - 1).First()); }
         break;
       case 59: // TokenDecl -> litchar
-{ CurrentSemanticValue.tokenInfo = new TokenInfo(LocationStack[LocationStack.Depth-1], null); }
+{ CurrentSemanticValue.tokenInfo = new TokenInfo(LocationStack.Skip(LocationStack.Count - 1).First(), null); }
         break;
       case 60: // NtSymbolList -> NtSymbol
 { 
                           CurrentSemanticValue.stringList = new List<string>();
-						  CurrentSemanticValue.stringList.Add(LocationStack[LocationStack.Depth-1].ToString()); 
+						  CurrentSemanticValue.stringList.Add(LocationStack.Skip(LocationStack.Count - 1).First().ToString()); 
 						}
         break;
       case 61: // NtSymbolList -> NtSymbolList, CommaOpt, NtSymbol
-{ ValueStack[ValueStack.Depth-3].stringList.Add(LocationStack[LocationStack.Depth-1].ToString()); CurrentSemanticValue.stringList = ValueStack[ValueStack.Depth-3].stringList; }
+{ ValueStack.Skip(ValueStack.Count-3).First().stringList.Add(LocationStack.Skip(LocationStack.Count - 1).First().ToString()); CurrentSemanticValue.stringList = ValueStack.Skip(ValueStack.Count - 3).First().stringList; }
         break;
       case 62: // NtSymbolList -> NtSymbolList, BadSeparator
-{ handler.ListError(LocationStack[LocationStack.Depth-1], 75); CurrentSemanticValue.stringList = ValueStack[ValueStack.Depth-2].stringList; }
+{ handler.ListError(LocationStack.Skip(LocationStack.Count - 1).First(), 75); CurrentSemanticValue.stringList = ValueStack.Skip(ValueStack.Count - 2).First().stringList; }
         break;
       case 94: // ARule -> RuleProlog, RightHandSide, AlternativesOpt, ';'
 { ClearCurrentLHS(); }
         break;
       case 95: // RuleProlog -> anchoredSymbol, ':'
-{ SetCurrentLHS(LocationStack[LocationStack.Depth-2]); }
+{ SetCurrentLHS(LocationStack.Skip(LocationStack.Count - 2).First()); }
         break;
       case 98: // RightHandSide -> /* empty */
 { CurrentSemanticValue.prod = NewProduction(); FinalizeProduction(CurrentSemanticValue.prod); }
         break;
       case 99: // RightHandSide -> RHStermList
-{ CurrentSemanticValue.prod = ValueStack[ValueStack.Depth-1].prod; FinalizeProduction(CurrentSemanticValue.prod); }
+{ CurrentSemanticValue.prod = ValueStack.Skip(ValueStack.Count - 1).First().prod; FinalizeProduction(CurrentSemanticValue.prod); }
         break;
       case 100: // RHStermList -> Symbols
-{ CurrentSemanticValue.prod = NewProduction(ValueStack[ValueStack.Depth-1].stringList, null); }
+{ CurrentSemanticValue.prod = NewProduction(ValueStack.Skip(ValueStack.Count - 1).First().stringList, null); }
         break;
       case 101: // RHStermList -> PrecOptAndAction, SymbolsOpt
 {
-                          CurrentSemanticValue.prod = NewProduction(null, ValueStack[ValueStack.Depth-2].proxy);
-                          AddSymbolsToProduction(CurrentSemanticValue.prod, ValueStack[ValueStack.Depth-1].stringList);
+                          CurrentSemanticValue.prod = NewProduction(null, ValueStack.Skip(ValueStack.Count - 2).First().proxy);
+                          AddSymbolsToProduction(CurrentSemanticValue.prod, ValueStack.Skip(ValueStack.Count - 1).First().stringList);
                         }
         break;
       case 102: // RHStermList -> RHStermList, PrecOptAndAction, SymbolsOpt
 {
-                          AddActionToProduction(ValueStack[ValueStack.Depth-3].prod, ValueStack[ValueStack.Depth-2].proxy);
-                          AddSymbolsToProduction(ValueStack[ValueStack.Depth-3].prod, ValueStack[ValueStack.Depth-1].stringList);
-                          CurrentSemanticValue.prod = ValueStack[ValueStack.Depth-3].prod;
+                          AddActionToProduction(ValueStack.Skip(ValueStack.Count - 3).First().prod, ValueStack.Skip(ValueStack.Count - 2).First().proxy);
+                          AddSymbolsToProduction(ValueStack.Skip(ValueStack.Count - 3).First().prod, ValueStack.Skip(ValueStack.Count - 1).First().stringList);
+                          CurrentSemanticValue.prod = ValueStack.Skip(ValueStack.Count - 3).First().prod;
                         }
         break;
       case 103: // SymbolsOpt -> /* empty */
 { CurrentSemanticValue.stringList = null; }
         break;
       case 105: // Symbols -> SymOrLit
-{ CurrentSemanticValue.stringList = new List<string>(); CurrentSemanticValue.stringList.Add(LocationStack[LocationStack.Depth-1].ToString()); }
+{ CurrentSemanticValue.stringList = new List<string>(); CurrentSemanticValue.stringList.Add(LocationStack.Skip(LocationStack.Count - 1).First().ToString()); }
         break;
       case 106: // Symbols -> Symbols, SymOrLit
-{ ValueStack[ValueStack.Depth-2].stringList.Add(LocationStack[LocationStack.Depth-1].ToString());  CurrentSemanticValue.stringList = ValueStack[ValueStack.Depth-2].stringList; }
+{ ValueStack.Skip(ValueStack.Count - 2).First().stringList.Add(LocationStack.Skip(LocationStack.Count - 1).First().ToString());  CurrentSemanticValue.stringList = ValueStack.Skip(ValueStack.Count - 2).First().stringList; }
         break;
       case 110: // PrecOptAndAction -> Action
-{ CurrentSemanticValue.proxy = ValueStack[ValueStack.Depth-1].proxy; }
+{ CurrentSemanticValue.proxy = ValueStack.Skip(ValueStack.Count - 1).First().proxy; }
         break;
       case 111: // PrecOptAndAction -> "%prec", ident, Action
-{ ValueStack[ValueStack.Depth-1].proxy.precedenceToken = LocationStack[LocationStack.Depth-2]; ValueStack[ValueStack.Depth-1].proxy.precedenceSpan = LocationStack[LocationStack.Depth-3]; CurrentSemanticValue.proxy = ValueStack[ValueStack.Depth-1].proxy; }
+{ ValueStack.Skip(ValueStack.Count - 1).First().proxy.precedenceToken = LocationStack.Skip(LocationStack.Count - 2).First(); ValueStack.Skip(ValueStack.Count - 1).First().proxy.precedenceSpan = LocationStack.Skip(LocationStack.Count - 3).First(); CurrentSemanticValue.proxy = ValueStack.Skip(ValueStack.Count - 1).First().proxy; }
         break;
       case 112: // PrecOptAndAction -> "%prec", ident
-{ CurrentSemanticValue.proxy = new ActionProxy(LocationStack[LocationStack.Depth-2], LocationStack[LocationStack.Depth-1], null); }
+{ CurrentSemanticValue.proxy = new ActionProxy(LocationStack.Skip(LocationStack.Count - 2).First(), LocationStack.Skip(LocationStack.Count - 1).First(), null); }
         break;
       case 113: // Action -> '{', CodeBlock, '}'
 { CurrentSemanticValue.proxy = new ActionProxy(null, null, CurrentLocationSpan); }

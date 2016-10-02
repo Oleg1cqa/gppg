@@ -111,9 +111,14 @@ namespace QUT.GPGen
 
                                 //if (num > this.production.rhs.Count)
                                 //    ErrReport(lineTag, String.Format("Index @{0} is out of bounds", num));
-                                Console.Write( "LocationStack[LocationStack.Depth-{0}]", pos - num + 1 );
-                            }
-                            else {
+
+								var stackPos = pos - num + 1;
+								if (stackPos == 1)
+									Console.Write($"LocationStack.Peek()");
+								else
+									Console.Write($"LocationStack.Skip(LocationStack.Count-{stackPos}).First()");
+							}
+							else {
                                 Output( i++ );
                                 if (la == '"') {
                                     Output( i++ );
@@ -180,7 +185,11 @@ namespace QUT.GPGen
                                 if (kind == null)
                                     kind = production.rhs[num - 1].kind;
 
-                                Console.Write( "ValueStack[ValueStack.Depth-{0}]", pos - num + 1 );
+								var stackPos = pos - num + 1;
+								if (stackPos == 1)
+									Console.Write($"ValueStack.Peek()");
+								else
+									Console.Write($"ValueStack.Skip(ValueStack.Count-{stackPos}).First()");
 
                                 if (kind != null)
                                     Console.Write( ".{0}", kind );

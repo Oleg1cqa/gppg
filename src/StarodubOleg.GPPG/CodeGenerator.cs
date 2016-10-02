@@ -223,7 +223,7 @@ namespace QUT.GPGen
 			Console.WriteLine("using System.CodeDom.Compiler;");
 			Console.WriteLine("using System.Globalization;");
 			Console.WriteLine("using System.Text;");
-			Console.WriteLine("using QUT.Gppg;");
+			Console.WriteLine("using StarodubOleg.GPPG.Runtime;");
 			foreach (string s in grammar.usingList)
 				Console.WriteLine("using " + s + ";");
 			Console.WriteLine();

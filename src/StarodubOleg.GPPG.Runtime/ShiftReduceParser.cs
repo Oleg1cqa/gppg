@@ -6,8 +6,6 @@ using System;
 using System.Text;
 using System.Globalization;
 using System.Diagnostics.CodeAnalysis;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace StarodubOleg.GPPG.Runtime
 {
@@ -76,17 +74,19 @@ namespace StarodubOleg.GPPG.Runtime
 		private bool recovering;
 		private int tokensSinceLastError;
 
-		private Stack<State> StateStack = new Stack<State>();
+		private PushdownPrefixState<State> StateStack = new PushdownPrefixState<State>();
+		private PushdownPrefixState<TValue> valueStack = new PushdownPrefixState<TValue>();
+		private PushdownPrefixState<TSpan> locationStack = new PushdownPrefixState<TSpan>();
 
 		/// <summary>
 		/// The stack of semantic value (YYSTYPE) values.
 		/// </summary>
-		protected Stack<TValue> ValueStack { get; } = new Stack<TValue>();
+		protected PushdownPrefixState<TValue> ValueStack { get { return valueStack; } }
 
 		/// <summary>
 		/// The stack of location value (YYLTYPE) varlues.
 		/// </summary>
-		protected Stack<TSpan> LocationStack { get; } = new Stack<TSpan>();
+		protected PushdownPrefixState<TSpan> LocationStack { get { return locationStack; } }
 
 		private int errorToken;
 		private int endOfFileToken;
@@ -203,7 +203,7 @@ namespace StarodubOleg.GPPG.Runtime
 			FsaState = states[0];
 
 			StateStack.Push(FsaState);
-			ValueStack.Push(CurrentSemanticValue);
+			valueStack.Push(CurrentSemanticValue);
 			LocationStack.Push(CurrentLocationSpan);
 
 			while (true)
@@ -275,7 +275,7 @@ namespace StarodubOleg.GPPG.Runtime
 #endif
 			FsaState = states[stateIndex];
 
-			ValueStack.Push(scanner.yylval);
+			valueStack.Push(scanner.yylval);
 			StateStack.Push(FsaState);
 			LocationStack.Push(scanner.yylloc);
 
@@ -304,8 +304,8 @@ namespace StarodubOleg.GPPG.Runtime
 			//
 			if (rhLen == 1)
 			{
-				CurrentSemanticValue = ValueStack.Peek();   // Default action: $$ = $1;
-				CurrentLocationSpan = LocationStack.Peek(); // Default action "@$ = @1;
+				CurrentSemanticValue = valueStack.TopElement();   // Default action: $$ = $1;
+				CurrentLocationSpan = LocationStack.TopElement(); // Default action "@$ = @1;
 			}
 			else if (rhLen == 0)
 			{
@@ -323,10 +323,10 @@ namespace StarodubOleg.GPPG.Runtime
 			else
 			{
 				// Default action: $$ = $1;
-				CurrentSemanticValue = ValueStack.Skip(LocationStack.Count - rhLen).First();
+				CurrentSemanticValue = valueStack[LocationStack.Depth - rhLen];
 				//  Default action "@$ = @1.Merge(@N)" for location info.
-				TSpan at1 = LocationStack.Skip(LocationStack.Count - rhLen).First();
-				TSpan atN = LocationStack.Skip(LocationStack.Count - 1).First();
+				TSpan at1 = LocationStack[LocationStack.Depth - rhLen];
+				TSpan atN = LocationStack[LocationStack.Depth - 1];
 				CurrentLocationSpan =
 					((at1 != null && atN != null) ? at1.Merge(atN) : default(TSpan));
 			}
@@ -336,16 +336,16 @@ namespace StarodubOleg.GPPG.Runtime
 			for (int i = 0; i < rule.RightHandSide.Length; i++)
 			{
 				StateStack.Pop();
-				ValueStack.Pop();
+				valueStack.Pop();
 				LocationStack.Pop();
 			}
-			FsaState = StateStack.Peek();
+			FsaState = StateStack.TopElement();
 
 			if (FsaState.Goto.ContainsKey(rule.LeftHandSide))
 				FsaState = states[FsaState.Goto[rule.LeftHandSide]];
 
 			StateStack.Push(FsaState);
-			ValueStack.Push(CurrentSemanticValue);
+			valueStack.Push(CurrentSemanticValue);
 			LocationStack.Push(CurrentLocationSpan);
 		}
 
@@ -425,13 +425,13 @@ namespace StarodubOleg.GPPG.Runtime
 					Console.Error.WriteLine("Error: popping state {0}", StateStack.TopElement().number);
 #endif
 				StateStack.Pop();
-				ValueStack.Pop();
+				valueStack.Pop();
 				LocationStack.Pop();
 
 #if TRACE_ACTIONS
 				DisplayStack();
 #endif
-				if (!StateStack.Any())
+				if (StateStack.IsEmpty())
 				{
 #if TRACE_ACTIONS
 						Console.Error.WriteLine("Aborting: didn't find a state that accepts error token");
@@ -439,7 +439,7 @@ namespace StarodubOleg.GPPG.Runtime
 					return false;
 				}
 				else
-					FsaState = StateStack.Peek();
+					FsaState = StateStack.TopElement();
 			}
 		}
 
@@ -542,8 +542,8 @@ namespace StarodubOleg.GPPG.Runtime
 		private void DisplayStack()
 		{
 			Console.Error.Write("State stack is now:");
-			for (int i = 0; i < StateStack.Count; i++)
-				Console.Error.Write(" {0}", StateStack.Skip(i).First().number);
+			for (int i = 0; i < StateStack.Depth; i++)
+				Console.Error.Write(" {0}", StateStack[i].number);
 			Console.Error.WriteLine();
 		}
 
@@ -602,4 +602,5 @@ namespace StarodubOleg.GPPG.Runtime
 			}
 		}
 	}
+
 }

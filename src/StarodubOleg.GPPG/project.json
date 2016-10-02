@@ -1,5 +1,5 @@
 ﻿{
-  "version": "0.1.0-alpha1-4",
+  "version": "0.1.0-alpha1-5",
   "description": "Tools based on Gardens Point Parser Generator version 1.5.2",
   "authors": [ "Wayne Kelly", "John Gough", "Starodub Oleg" ],
   "copyright": "Queensland University of Technology (QUT), Wayne Kelly, John Gough 2005-2014, Starodub Oleg, 2016",
@@ -20,24 +20,24 @@
       "version": "1.0.1"
     },
     "Newtonsoft.Json": "9.0.1",
-    "StarodubOleg.GPPG.Runtime": "0.1.0-alpha1-1"
+    "StarodubOleg.GPPG.Runtime": "0.1.0-alpha1-2"
   },
 
   "tools": {
     "StarodubOleg.GPLEX": "0.1.0-alpha1-3",
-    "StarodubOleg.GPPG": "0.1.0-alpha1-2"
+    "StarodubOleg.GPPG": "0.1.0-alpha1-4"
   },
 
   "frameworks": {
     "netcoreapp1.0": {
     }
-  }
+  },
 
-  //"scripts": {
-  //  "precompile": [
-  //    "dotnet gplex %project:Directory%/gppg.lex",
-  //    "dotnet gplex %project:Directory%/ScanAction.lex",
-  //    "dotnet gppg /gplex /nolines %project:Directory%/gppg.y"
-  //  ]
-  //}
+  "scripts": {
+    "precompile": [
+      "dotnet gplex %project:Directory%/gppg.lex",
+      "dotnet gplex %project:Directory%/ScanAction.lex",
+      "dotnet gppg /gplex /nolines %project:Directory%/gppg.y"
+    ]
+  }
 }

@@ -1,8 +1,8 @@
 ﻿{
-  "version": "0.1.0-alpha1-2",
+  "version": "0.1.0-alpha1-3",
   "description": "Tools based on Gardens Point Parser Generator version 1.5.2",
   "authors": [ "Wayne Kelly", "John Gough", "Starodub Oleg" ],
-  "copyright": "Wayne Kelly, John Gough 2005-2014, Starodub Oleg, 2016",
+  "copyright": "Queensland University of Technology (QUT), Wayne Kelly, John Gough 2005-2014, Starodub Oleg, 2016",
 
   "packOptions": {
     "tags": [ "GPPG", "Parser", "netcore" ],
@@ -19,12 +19,13 @@
       "type": "platform",
       "version": "1.0.1"
     },
-    "Newtonsoft.Json": "9.0.1"
+    "Newtonsoft.Json": "9.0.1",
+    "StarodubOleg.GPPG.Runtime": "0.1.0-alpha1-1"
   },
 
   "tools": {
     "StarodubOleg.GPLEX": "0.1.0-alpha1-3",
-    "StarodubOleg.GPPG" : "0.1.0-alpha1-1"
+    "StarodubOleg.GPPG": "0.1.0-alpha1-2"
   },
 
   "frameworks": {

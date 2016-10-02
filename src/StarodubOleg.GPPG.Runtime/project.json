@@ -1,0 +1,21 @@
+﻿{
+  "version": "0.1.0-alpha1-1",
+  "description": "Tools based on Gardens Point Parser Generator version 1.5.2",
+  "authors": [ "Wayne Kelly", "John Gough", "Starodub Oleg" ],
+  "copyright": "Queensland University of Technology (QUT), Wayne Kelly, John Gough 2005-2014, Starodub Oleg, 2016",
+
+  "packOptions": {
+    "tags": [ "GPPG", "Parser", "netcore" ],
+    "projectUrl": "https://github.com/Oleg1cqa/gppg",
+    "licenseUrl": "https://github.com/Oleg1cqa/gppg/blob/master/License.md"
+  },
+
+  "dependencies": {
+    "NETStandard.Library": "1.6.0"
+  },
+
+  "frameworks": {
+    "netstandard1.6": {
+    }
+  }
+}

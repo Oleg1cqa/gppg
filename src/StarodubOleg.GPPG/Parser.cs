@@ -4,7 +4,7 @@
 
 // GPPG version 0.1.0.0
 // Machine:  HOME
-// DateTime: 02.10.2016 13:06:01
+// DateTime: 02.10.2016 13:11:45
 // Input file <D:\Проекты\gppg\src\StarodubOleg.GPPG/gppg.y - 01.10.2016 21:38:17>
 
 // options: no-lines gplex
